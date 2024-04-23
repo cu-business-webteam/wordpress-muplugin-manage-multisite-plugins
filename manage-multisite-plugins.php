@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name:   Manage Multisite Plugins
- * Description:   Provides thorough plugin usage data on the multisite network level.
+ * Description:   Provides more thorough plugin usage data for your entire WordPress multisite network.
  * Author:        Cornell SC Johnson College of Business
  * Author URI:    https://business.cornell.edu
  * Version:       1.0

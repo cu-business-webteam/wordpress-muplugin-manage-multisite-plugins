@@ -1,6 +1,6 @@
 {
   "name": "cornell-business/manage-multisite-plugins",
-  "description": "WordPress multisite domain mapping for the modern era.",
+  "description": "Provides more thorough plugin usage data for your entire WordPress multisite network.",
   "homepage": "https://github.com/cu-business-webteam/wordpress-muplugin-manage-multisite-plugins",
   "keywords": [
     "wordpress",
