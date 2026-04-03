@@ -511,8 +511,8 @@ final class Admin {
             <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<?php
 
-			$plugins_page_url     = $this->get_network_plugins_page_url();
-			$plugin_data          = $this->get_network_plugins_data();
+			$plugins_page_url = $this->get_network_plugins_page_url();
+			$plugin_data      = $this->get_network_plugins_data();
 
 			if ( empty( $plugin_data ) ) :
 				?>
@@ -520,148 +520,230 @@ final class Admin {
 			<?php
 			else:
 
-				// Organize plugins into categories.
-				$internal_plugins = [];
-				$external_plugins = [];
+			// Organize plugins into categories.
+			$internal_plugins = [];
+			$external_plugins = [];
 
-				$must_use_plugins       = [];
-				$network_active_plugins = [];
-				$inactive_plugins       = [];
-				$active_plugins         = [];
+			$must_use_plugins       = [];
+			$network_active_plugins = [];
+			$inactive_plugins       = [];
+			$active_plugins         = [];
 
-				foreach ( $plugin_data as $key => $data ) {
-					if ( $this->is_internal_plugin( $data ) ) {
-						$internal_plugins[ $key ] = $data;
-					} else {
-						$external_plugins[ $key ] = $data;
-					}
-					if ( ! empty( $data[ 'IsMustUse' ] ) ) {
-						$must_use_plugins[ $key ] = $data;
-					} else if ( ! empty( $data[ 'IsNetworkActive' ] ) ) {
-						$network_active_plugins[ $key ] = $data;
-					} else if ( empty( $data[ 'Sites' ] ) ) {
-						$inactive_plugins[ $key ] = $data;
-					} else {
-						$active_plugins[ $key ] = $data;
-					}
+			foreach ( $plugin_data as $key => $data ) {
+				if ( $this->is_internal_plugin( $data ) ) {
+					$internal_plugins[ $key ] = $data;
+				} else {
+					$external_plugins[ $key ] = $data;
 				}
+				if ( ! empty( $data[ 'IsMustUse' ] ) ) {
+					$must_use_plugins[ $key ] = $data;
+				} else if ( ! empty( $data[ 'IsNetworkActive' ] ) ) {
+					$network_active_plugins[ $key ] = $data;
+				} else if ( empty( $data[ 'Sites' ] ) ) {
+					$inactive_plugins[ $key ] = $data;
+				} else {
+					$active_plugins[ $key ] = $data;
+				}
+			}
 
-				$all_plugins_count      = $this->process_plugin_counts( $plugin_data );
-				$internal_plugins_count = $this->process_plugin_counts( $internal_plugins );
-				$external_plugins_count = $this->process_plugin_counts( $external_plugins );
+			$all_plugins_count      = $this->process_plugin_counts( $plugin_data );
+			$internal_plugins_count = $this->process_plugin_counts( $internal_plugins );
+			$external_plugins_count = $this->process_plugin_counts( $external_plugins );
 
-				?>
-                <p>This page contains "extra" data about the plugins on our network. To manage plugins, <a href="<?php echo esc_url( $plugins_page_url ); ?>">go to main plugins page</a>.</p>
-                <p><a class="button" href="<?php echo esc_url( $this->get_download_plugins_data_url() ); ?>">Download plugin data</a></p>
-				<?php
+			?>
+            <p>This page contains "extra" data about the plugins on our network. To manage plugins, <a href="<?php echo esc_url( $plugins_page_url ); ?>">go to main plugins page</a>.</p>
+            <p><a class="button" href="<?php echo esc_url( $this->get_download_plugins_data_url() ); ?>">Download plugin data</a></p>
+			<?php
 
-				?>
-                <h2 class="mmp-plugins-section-heading">Statistics</h2>
-                <p>There are <?php echo $all_plugins_count[ 'total' ]; ?> plugins.</p>
-                <div style="background-color:#fff;padding:0.5rem 1rem 1rem;">
-
-                    <h3>All plugins</h3>
-                    <ul style="margin:0 0 1.5rem 1.5rem;list-style:disc;">
-                        <li><a href="#must-use"><?php echo $all_plugins_count[ 'mu' ]; ?> plugins are must-use</a></li>
-                        <li><a href="#network-active"><?php echo $all_plugins_count[ 'network' ]; ?> plugins are network-active</a></li>
-                        <li><a href="#inactive"><?php echo $all_plugins_count[ 'inactive' ]; ?> plugins are inactive</a></li>
-                        <li><a href="#active"><?php echo $all_plugins_count[ 'active' ]; ?> plugins are manually active somewhere</a></li>
-                    </ul>
-
-                    <h3>Plugins by type</h3>
-                    <div style="display:flex;gap:1rem;">
-                        <div>
-                            <h4 style="margin:0 0 1rem;"><?php echo $internal_plugins_count[ 'total' ]; ?> plugins are internal plugins</h4>
-                            <ul style="margin:0.5rem 0 0.75rem 1.5rem;list-style:disc;">
-                                <li><?php echo $internal_plugins_count[ 'mu' ]; ?> plugins are must-use</li>
-                                <li><?php echo $internal_plugins_count[ 'network' ]; ?> plugins are network-active</li>
-                                <li><?php echo $internal_plugins_count[ 'inactive' ]; ?> plugins are inactive</li>
-                                <li><?php echo $internal_plugins_count[ 'active' ]; ?> plugins are manually active somewhere</li>
-                            </ul>
+			?>
+            <div class="mmp-plugins-sections">
+                <div class="mmp-plugins-section">
+                    <h2 class="mmp-plugins-section-heading">Statistics</h2>
+                    <div class="mmp-plugins-section-body mmp-plugins-no-edge">
+                        <div class="mmp-plugins-section-content mmp-plugins-no-edge">
+                            <p>There are <?php echo $all_plugins_count[ 'total' ]; ?> plugins.</p>
                         </div>
-                        <div>
-                            <h4 style="margin:0 0 1rem;"><?php echo $external_plugins_count[ 'total' ]; ?> plugins are third-party plugins</h4>
-                            <ul style="margin:0.5rem 0 0.75rem 1.5rem;list-style:disc;">
-                                <li><?php echo $external_plugins_count[ 'mu' ]; ?> plugins are must-use</li>
-                                <li><?php echo $external_plugins_count[ 'network' ]; ?> plugins are network-active</li>
-                                <li><?php echo $external_plugins_count[ 'inactive' ]; ?> plugins are inactive</li>
-                                <li><?php echo $external_plugins_count[ 'active' ]; ?> plugins are manually active somewhere</li>
-                            </ul>
+                        <div class="mmp-plugins-section-statistics">
+                            <div class="mmp-plugins-no-edge">
+                                <h3>All plugins</h3>
+                                <ul style="margin:0 0 1.5rem 1.5rem;list-style:disc;">
+                                    <li><a href="#must-use"><?php echo $all_plugins_count[ 'mu' ]; ?> plugins are must-use</a></li>
+                                    <li><a href="#network-active"><?php echo $all_plugins_count[ 'network' ]; ?> plugins are network-active</a></li>
+                                    <li><a href="#inactive"><?php echo $all_plugins_count[ 'inactive' ]; ?> plugins are inactive</a></li>
+                                    <li><a href="#active"><?php echo $all_plugins_count[ 'active' ]; ?> plugins are manually active somewhere</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="mmp-plugins-no-edge">
+                                <h3>Plugins (internal)</h3>
+                                <p style="margin:0 0 0.75rem;"><?php echo $internal_plugins_count[ 'total' ]; ?> plugins are internal plugins</p>
+                                <ul style="margin:0.5rem 0 0.75rem 1.5rem;list-style:disc;">
+                                    <li><?php echo $internal_plugins_count[ 'mu' ]; ?> plugins are must-use</li>
+                                    <li><?php echo $internal_plugins_count[ 'network' ]; ?> plugins are network-active</li>
+                                    <li><?php echo $internal_plugins_count[ 'inactive' ]; ?> plugins are inactive</li>
+                                    <li><?php echo $internal_plugins_count[ 'active' ]; ?> plugins are manually active somewhere</li>
+                                </ul>
+                            </div>
+
+                            <div class="mmp-plugins-no-edge">
+                                <h3>Plugins (third-party)</h3>
+                                <p style="margin:0 0 0.75rem;"><?php echo $external_plugins_count[ 'total' ]; ?> plugins are third-party plugins</p>
+                                <ul style="margin:0.5rem 0 0.75rem 1.5rem;list-style:disc;">
+                                    <li><?php echo $external_plugins_count[ 'mu' ]; ?> plugins are must-use</li>
+                                    <li><?php echo $external_plugins_count[ 'network' ]; ?> plugins are network-active</li>
+                                    <li><?php echo $external_plugins_count[ 'inactive' ]; ?> plugins are inactive</li>
+                                    <li><?php echo $external_plugins_count[ 'active' ]; ?> plugins are manually active somewhere</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <h2 id="must-use" class="mmp-plugins-section-heading">Must-use plugins (<?php echo count( $must_use_plugins ); ?>)</h2>
-                <p>Must-use plugins (a.k.a. mu-plugins) are plugins installed in a special directory inside the content folder and which are automatically enabled on all sites on the network. <a href="https://wordpress.org/documentation/article/must-use-plugins/" target="_blank">Learn more about
-                        must-use plugins</a></p>
-				<?php
+                <div class="mmp-plugins-section">
+                    <h2 id="must-use" class="mmp-plugins-section-heading">Must-use plugins (<?php echo count( $must_use_plugins ); ?>)</h2>
+                    <div class="mmp-plugins-section-body mmp-plugins-no-edge">
+                        <div class="mmp-plugins-section-content mmp-plugins-no-edge">
+                            <p>Must-use plugins (a.k.a. mu-plugins) are plugins installed in a special directory inside the content folder and which are automatically enabled on all sites on the network. <a href="https://wordpress.org/documentation/article/must-use-plugins/" target="_blank">Learn
+                                    more about must-use plugins</a></p>
+                        </div>
+						<?php
 
-				if ( empty( $must_use_plugins ) ) :
-					?>
-                    <p>There are no must-use plugins.</p>
-				<?php
-				else :
-					$this->print_plugin_data_table( $must_use_plugins, "must-use" );
-				endif;
+						if ( empty( $must_use_plugins ) ) :
+							?>
+                            <p>There are no must-use plugins.</p>
+						<?php
+						else :
+							$this->print_plugin_data_table( $must_use_plugins, "must-use" );
+						endif;
 
-				?>
-                <h2 id="network-active" class="mmp-plugins-section-heading">Network-active plugins (<?php echo count( $network_active_plugins ); ?>)</h2>
-                <p>Network-active are plugins which are activated inside the network admin and activated on all sites on the network. <a href="<?php echo esc_url( $plugins_page_url ); ?>">Manage network-active plugins</a></p>
-				<?php
+						?>
+                    </div>
+                </div>
 
-				if ( empty( $network_active_plugins ) ) :
-					?>
-                    <p>There are no network-active plugins.</p>
-				<?php
-				else :
-					$this->print_plugin_data_table( $network_active_plugins, "network-active" );
-				endif;
+                <div class="mmp-plugins-section">
+                    <h2 id="network-active" class="mmp-plugins-section-heading">Network-active plugins (<?php echo count( $network_active_plugins ); ?>)</h2>
+                    <div class="mmp-plugins-section-body mmp-plugins-no-edge">
+                        <div class="mmp-plugins-section-content mmp-plugins-no-edge">
+                            <p>Network-active are plugins which are activated inside the network admin and activated on all sites on the network. <a href="<?php echo esc_url( $plugins_page_url ); ?>">Manage network-active plugins</a></p>
+                        </div>
+						<?php
 
-				?>
-                <h2 id="inactive" class="mmp-plugins-section-heading">Plugins that are not active anywhere (<?php echo count( $inactive_plugins ); ?>)</h2>
-				<?php
+						if ( empty( $network_active_plugins ) ) :
+							?>
+                            <p>There are no network-active plugins.</p>
+						<?php
+						else :
+							$this->print_plugin_data_table( $network_active_plugins, "network-active" );
+						endif;
 
-				if ( empty( $inactive_plugins ) ) :
-					?>
-                    <p>All plugins are active somewhere.</p>
-				<?php
-				else :
-					$this->print_plugin_data_table( $inactive_plugins, "inactive" );
-				endif;
+						?>
+                    </div>
+                </div>
 
-				?>
-                <h2 id="active" class="mmp-plugins-section-heading">Plugins that are manually active somewhere (<?php echo count( $active_plugins ); ?>)</h2>
-				<?php
+                <div class="mmp-plugins-section">
+                    <h2 id="inactive" class="mmp-plugins-section-heading">Plugins that are not active anywhere (<?php echo count( $inactive_plugins ); ?>)</h2>
+                    <div class="mmp-plugins-section-body mmp-plugins-no-edge">
+						<?php
 
-				if ( empty( $active_plugins ) ) :
-					?>
-                    <p>There are no other plugins.</p>
-				<?php
-				else :
-					$this->print_plugin_data_table( $active_plugins, "active" );
-				endif;
-			endif;
+						if ( empty( $inactive_plugins ) ) :
+							?>
+                            <div class="mmp-plugins-section-content mmp-plugins-no-edge">
+                                <p>All plugins are active somewhere.</p>
+                            </div>
+						<?php
+						else :
+							$this->print_plugin_data_table( $inactive_plugins, "inactive" );
+						endif;
 
-			?>
+						?>
+                    </div>
+                </div>
+
+                <div class="mmp-plugins-section">
+                    <h2 id="active" class="mmp-plugins-section-heading">Plugins that are manually active somewhere (<?php echo count( $active_plugins ); ?>)</h2>
+                    <div class="mmp-plugins-section-body mmp-plugins-no-edge">
+						<?php
+
+						if ( empty( $active_plugins ) ) :
+							?>
+                            <div class="mmp-plugins-section-content mmp-plugins-no-edge">
+                                <p>There are no other plugins.</p>
+                            </div>
+						<?php
+						else :
+							$this->print_plugin_data_table( $active_plugins, "active" );
+						endif;
+						endif;
+
+						?>
+                    </div>
+                </div>
+            </div>
         </div>
         <style>
+            .mmp-plugins-sections {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .mmp-plugins-section {
+                background-color: #fff;
+            }
+
             .mmp-plugins-section-heading {
+                display: block;
+                background-color: #003366;
+                color: #fff;
+                border-bottom: 1px solid #aaa;
+                padding: 1.25rem 1rem;
                 font-size: 1.8em;
-                margin: 2.5rem 0 1rem;
+                margin: 0;
+                position: sticky;
+                top: 32px;
+            }
+
+            .mmp-plugins-section-body {
+                overflow-x: auto;
+            }
+
+            .mmp-plugins-section-content {
+                padding: 1rem;
+            }
+
+            .mmp-plugins-no-edge > *:first-child {
+                margin-top: 0;
+            }
+
+            .mmp-plugins-no-edge > *:last-child {
+                margin-bottom: 0;
+            }
+
+            .mmp-plugins-section-statistics {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                padding: 0.25rem 1rem 1rem;
             }
 
             table.mmp-plugins {
                 width: 100%;
                 background-color: #fff;
                 text-align: left;
-                margin: 1.5rem 0;
+                margin: 0;
                 border-collapse: collapse;
                 border-spacing: 0;
             }
 
+            table.mmp-plugins thead tr,
+            table.mmp-plugins thead th {
+                background-color: #eee;
+            }
+
             table.mmp-plugins th {
                 padding: 0.5rem 1.5rem 0.5rem 1rem;
-                vertical-align: center;
+                vertical-align: middle;
+                border-top: 1px solid #aaa;
             }
 
             table.mmp-plugins td {
