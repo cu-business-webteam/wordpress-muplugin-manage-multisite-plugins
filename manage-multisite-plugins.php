@@ -277,12 +277,42 @@ final class Admin {
 		exit;
 	}
 
+	/**
+	 * Merges core get_mu_plugins() with bedrock-autoloader subdirectory plugins.
+	 *
+	 * @return array
+	 */
+	private function get_all_mu_plugins(): array {
+		$mu_plugins = get_mu_plugins();
+
+		if ( ! class_exists( 'Roots\Bedrock\Autoloader' ) ) {
+			return $mu_plugins;
+		}
+
+		$bedrock_cache = get_site_option( 'bedrock_autoloader' );
+
+		if ( empty( $bedrock_cache[ 'plugins' ] ) || ! is_array( $bedrock_cache[ 'plugins' ] ) ) {
+			return $mu_plugins;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		foreach ( $bedrock_cache[ 'plugins' ] as $plugin_key => $plugin_data ) {
+			if ( ! isset( $mu_plugins[ $plugin_key ] ) ) {
+				$mu_plugins[ $plugin_key ] = get_plugin_data( WPMU_PLUGIN_DIR . '/' . $plugin_key );
+			}
+		}
+
+		return $mu_plugins;
+	}
+
 	private function get_network_plugins_data(): array {
 
 		$all_plugin_data = [];
 
 		// Process must-use plugins.
-		$must_use_plugins = get_mu_plugins();
+		$must_use_plugins = $this->get_all_mu_plugins();
+
 		foreach ( $must_use_plugins as $plugin_key => $plugin_data ) {
 			if ( ! empty( $all_plugin_data[ $plugin_key ] ) ) {
 				continue;
