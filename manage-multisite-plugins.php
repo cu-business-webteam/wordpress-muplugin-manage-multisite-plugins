@@ -5,7 +5,7 @@
  * Description:   Provides more thorough plugin usage data for your entire WordPress multisite network.
  * Author:        Cornell SC Johnson College of Business
  * Author URI:    https://business.cornell.edu
- * Version:       1.0
+ * Version:       1.2.0
  */
 
 namespace Manage_Multisite_Plugins;

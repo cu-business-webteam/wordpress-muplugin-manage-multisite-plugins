@@ -14,5 +14,6 @@
       "homepage": "https://business.cornell.edu"
     }
   ],
-  "type": "wordpress-muplugin"
+  "type": "wordpress-muplugin",
+  "version": "1.2.0"
 }
